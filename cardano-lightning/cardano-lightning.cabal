@@ -1,0 +1,111 @@
+cabal-version: 3.4
+name:          cardano-lightning
+version:       0.0.1.0
+synopsis:      Cardano Lightning Transaction Builder
+build-type:    Simple
+
+flag defer-plugin-errors
+  description:
+    Defer errors from the plugin, useful for things like Haddock that can't handle it.
+
+  default:     False
+  manual:      True
+
+common base
+  default-language:   Haskell2010
+  default-extensions:
+    AllowAmbiguousTypes
+    BlockArguments
+    ConstraintKinds
+    DataKinds
+    DefaultSignatures
+    DeriveAnyClass
+    DeriveDataTypeable
+    DeriveFoldable
+    DeriveFunctor
+    DeriveGeneric
+    DeriveLift
+    DeriveTraversable
+    DerivingStrategies
+    DerivingVia
+    DuplicateRecordFields
+    EmptyCase
+    EmptyDataDeriving
+    ExplicitForAll
+    FlexibleContexts
+    FlexibleInstances
+    FunctionalDependencies
+    GADTs
+    GeneralizedNewtypeDeriving
+    LambdaCase
+    MultiWayIf
+    NamedFieldPuns
+    NumericUnderscores
+    OverloadedRecordDot
+    OverloadedStrings
+    PatternSynonyms
+    PolyKinds
+    RankNTypes
+    RecordWildCards
+    ScopedTypeVariables
+    StandaloneDeriving
+    TupleSections
+    TypeApplications
+    TypeFamilies
+    TypeOperators
+    UndecidableInstances
+    ViewPatterns
+
+  ghc-options:
+    -Wall -Wnoncanonical-monad-instances -Wincomplete-uni-patterns
+    -Wunused-packages -Wincomplete-record-updates
+    -Wredundant-constraints -Widentities
+
+  if flag(defer-plugin-errors)
+    ghc-options: -fplugin-opt PlutusTx.Plugin:defer-errors
+
+executable cardano-lightning
+  import:         base
+  hs-source-dirs: app
+  main-is:        Main.hs
+  build-depends:  base
+
+library transaction
+  import:          base
+  exposed-modules:
+    CardanoLightning.Transaction
+    CardanoLightning.Transaction.AUTxO
+    CardanoLightning.Transaction.Validator
+
+  ghc-options:     -j3
+  hs-source-dirs:  transaction
+  build-depends:
+    , base
+    , bytestring
+    , cardano-api
+    , containers
+    , plutus-ledger-api
+    , plutus-tx
+
+-- , plutus-core
+-- , cardano-ledger-api
+-- , cardano-ledger-core
+-- , cardano-ledger-mary
+-- , containers
+-- , errors
+-- , lens
+-- , mgdoc:{mgdoc, mgdoc-contrib, plutus-scripts, redemption-tree}
+-- , ouroboros-consensus
+-- , ouroboros-consensus-cardano
+-- , plutus-ledger-api
+-- , plutus-tx
+-- , sop-extras
+-- , time
+-- , transformers
+
+test-suite cardano-lightning-test
+  import:         base
+  hs-source-dirs: test
+  type:           exitcode-stdio-1.0
+  main-is:        Spec.hs
+  other-modules:  CardanoLightning.Transaction.ValidationSpec
