@@ -68,24 +68,72 @@ executable cardano-lightning
   import:         base
   hs-source-dirs: app
   main-is:        Main.hs
-  build-depends:  base
+  build-depends:
+    , aeson
+    , base
+    , base16-bytestring
+    , bytestring
+    , cardano-api
+    , cardano-lightning:{contrib, transaction}
+    , containers
+    , filepath
+    , optparse-applicative
+    , text
 
+  other-modules:
+    CardanoLightning.Commands.Build
+    Paths_cardano_lightning
+
+library contrib
+  import:          base
+  exposed-modules:
+    CardanoLightning.Contrib.Cardano.Api
+    CardanoLightning.Contrib.Cardano.InMemory
+    CardanoLightning.Contrib.Data.Aeson
+    CardanoLightning.Contrib.Data.Foldable
+
+  ghc-options:     -j3
+  hs-source-dirs:  contrib
+  build-depends:
+    , aeson
+    , base
+    , base16-bytestring
+    , bytestring
+    , cardano-api
+    , cardano-ledger-alonzo
+    , containers
+    , errors
+    , lens
+    , microlens
+    , mtl
+    , plutus-tx
+    , text
+    , transformers
+
+--, cardano-binary
 library transaction
   import:          base
   exposed-modules:
     CardanoLightning.Transaction
-    CardanoLightning.Transaction.AUTxO
     CardanoLightning.Transaction.Validator
 
   ghc-options:     -j3
   hs-source-dirs:  transaction
   build-depends:
+    , aeson
     , base
     , bytestring
     , cardano-api
+    , cardano-binary
+    , cardano-lightning:contrib
     , containers
+    , errors
+    , plutus-core
     , plutus-ledger-api
     , plutus-tx
+    , serialise
+    , text
+    , vector
 
 -- , plutus-core
 -- , cardano-ledger-api
@@ -104,8 +152,17 @@ library transaction
 -- , transformers
 
 test-suite cardano-lightning-test
-  import:         base
-  hs-source-dirs: test
-  type:           exitcode-stdio-1.0
-  main-is:        Spec.hs
-  other-modules:  CardanoLightning.Transaction.ValidationSpec
+  import:             base
+  hs-source-dirs:     test
+  type:               exitcode-stdio-1.0
+  main-is:            Spec.hs
+  other-modules:      CardanoLightning.Transaction.ValidatorSpec
+  build-tool-depends: hspec-discover:hspec-discover
+  build-depends:
+    , aeson
+    , base
+    , bytestring
+    , cardano-binary
+    , cardano-lightning:{contrib, transaction}
+    , hspec
+    , QuickCheck
