@@ -1,0 +1,168 @@
+cabal-version: 3.4
+name:          cardano-lightning
+version:       0.0.1.0
+synopsis:      Cardano Lightning Transaction Builder
+build-type:    Simple
+
+flag defer-plugin-errors
+  description:
+    Defer errors from the plugin, useful for things like Haddock that can't handle it.
+
+  default:     False
+  manual:      True
+
+common base
+  default-language:   Haskell2010
+  default-extensions:
+    AllowAmbiguousTypes
+    BlockArguments
+    ConstraintKinds
+    DataKinds
+    DefaultSignatures
+    DeriveAnyClass
+    DeriveDataTypeable
+    DeriveFoldable
+    DeriveFunctor
+    DeriveGeneric
+    DeriveLift
+    DeriveTraversable
+    DerivingStrategies
+    DerivingVia
+    DuplicateRecordFields
+    EmptyCase
+    EmptyDataDeriving
+    ExplicitForAll
+    FlexibleContexts
+    FlexibleInstances
+    FunctionalDependencies
+    GADTs
+    GeneralizedNewtypeDeriving
+    LambdaCase
+    MultiWayIf
+    NamedFieldPuns
+    NumericUnderscores
+    OverloadedRecordDot
+    OverloadedStrings
+    PatternSynonyms
+    PolyKinds
+    RankNTypes
+    RecordWildCards
+    ScopedTypeVariables
+    StandaloneDeriving
+    TupleSections
+    TypeApplications
+    TypeFamilies
+    TypeOperators
+    UndecidableInstances
+    ViewPatterns
+
+  ghc-options:
+    -Wall -Wnoncanonical-monad-instances -Wincomplete-uni-patterns
+    -Wunused-packages -Wincomplete-record-updates
+    -Wredundant-constraints -Widentities
+
+  if flag(defer-plugin-errors)
+    ghc-options: -fplugin-opt PlutusTx.Plugin:defer-errors
+
+executable cardano-lightning
+  import:         base
+  hs-source-dirs: app
+  main-is:        Main.hs
+  build-depends:
+    , aeson
+    , base
+    , base16-bytestring
+    , bytestring
+    , cardano-api
+    , cardano-lightning:{contrib, transaction}
+    , containers
+    , filepath
+    , optparse-applicative
+    , text
+
+  other-modules:
+    CardanoLightning.Commands.Build
+    Paths_cardano_lightning
+
+library contrib
+  import:          base
+  exposed-modules:
+    CardanoLightning.Contrib.Cardano.Api
+    CardanoLightning.Contrib.Cardano.InMemory
+    CardanoLightning.Contrib.Data.Aeson
+    CardanoLightning.Contrib.Data.Foldable
+
+  ghc-options:     -j3
+  hs-source-dirs:  contrib
+  build-depends:
+    , aeson
+    , base
+    , base16-bytestring
+    , bytestring
+    , cardano-api
+    , cardano-ledger-alonzo
+    , containers
+    , errors
+    , lens
+    , microlens
+    , mtl
+    , plutus-tx
+    , text
+    , transformers
+
+--, cardano-binary
+library transaction
+  import:          base
+  exposed-modules:
+    CardanoLightning.Transaction
+    CardanoLightning.Transaction.Validator
+
+  ghc-options:     -j3
+  hs-source-dirs:  transaction
+  build-depends:
+    , aeson
+    , base
+    , bytestring
+    , cardano-api
+    , cardano-binary
+    , cardano-lightning:contrib
+    , containers
+    , errors
+    , plutus-core
+    , plutus-ledger-api
+    , plutus-tx
+    , serialise
+    , text
+    , vector
+
+-- , plutus-core
+-- , cardano-ledger-api
+-- , cardano-ledger-core
+-- , cardano-ledger-mary
+-- , containers
+-- , errors
+-- , lens
+-- , mgdoc:{mgdoc, mgdoc-contrib, plutus-scripts, redemption-tree}
+-- , ouroboros-consensus
+-- , ouroboros-consensus-cardano
+-- , plutus-ledger-api
+-- , plutus-tx
+-- , sop-extras
+-- , time
+-- , transformers
+
+test-suite cardano-lightning-test
+  import:             base
+  hs-source-dirs:     test
+  type:               exitcode-stdio-1.0
+  main-is:            Spec.hs
+  other-modules:      CardanoLightning.Transaction.ValidatorSpec
+  build-tool-depends: hspec-discover:hspec-discover
+  build-depends:
+    , aeson
+    , base
+    , bytestring
+    , cardano-binary
+    , cardano-lightning:{contrib, transaction}
+    , hspec
+    , QuickCheck

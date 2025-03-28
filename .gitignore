@@ -1,0 +1,10 @@
+.pre-commit-config.yaml
+dist-newstyle/
+.run
+node_modules/
+
+/testnet/example
+/testnet/logs
+
+# Explicitly keep test fixtures
+!cardano-lightning/test/Fixtures/
