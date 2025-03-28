@@ -2,12 +2,26 @@
 {
   description = "Cardano Lightning Transaction Builder";
 
-  # nixConfig = {
-  #   bash-prompt = ''\[\033[1;32m\][cl-sig:\w]\$\[\033[0m\] '';
-  # };
-
   inputs = {
-    cardano-node.url = "github:IntersectMBO/cardano-node/10.2";
+    cardano-node.url = "github:IntersectMBO/cardano-node/9.1.0";
+    # NOTE: Please update the version manually in the ./nix/packages/cardano-address.nix
+    cardano-address-bin = {
+      url =
+        "https://github.com/IntersectMBO/cardano-addresses/releases/download/4.0.0/cardano-address-4.0.0-linux.tar.gz";
+      flake = false;
+    };
+    # NOTE: Please update the version manually in the ./nix/packages/kupo.nix
+    kupo-bin = {
+      url =
+        "https://github.com/CardanoSolutions/kupo/releases/download/v2.10/kupo-v2.10.0-x86_64-linux.zip";
+      flake = false;
+    };
+    # NOTE: Please update the version manually in the ./nix/packages/ogmios.nix
+    ogmios-bin = {
+      url =
+        "https://github.com/CardanoSolutions/ogmios/releases/download/v6.11.2/ogmios-v6.11.2-x86_64-linux.zip";
+      flake = false;
+    };
     iogx = {
       url = "github:input-output-hk/iogx";
       # Not sure how this is related to the cabal.project?
@@ -40,10 +54,10 @@
 
 
     # cardano-addresses.url = "github:IntersectMBO/cardano-addresses?ref=03aace86f4a7b4bdb4af4ae8da98929d89514b9f";
-    # bech32.url = "github:IntersectMBO/bech32";
-    # process-compose-flake.url = "github:Platonic-systems/process-compose-flake";
+    bech32.url = "github:IntersectMBO/bech32";
     # flake-parts.url = "github:hercules-ci/flake-parts";
     # nix-github-actions.url = "github:nix-community/nix-github-actions";
+    process-compose.url = "github:F1bonacc1/process-compose";
   };
 
   # Docs for mkFlake: https://github.com/input-output-hk/iogx/blob/main/doc/api.md#mkflake
